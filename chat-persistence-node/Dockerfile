@@ -9,8 +9,9 @@ COPY chat-connection-node ./chat-connection-node
 
 RUN mvn -pl chat-persistence-node -am clean package -DskipTests
 
+# Extract the layered components using the modern Spring Boot 3.3+ tools mode
 WORKDIR /workspace/chat-persistence-node/target
-RUN java -Djarmode=layertools -jar chat-persistence-node-*.jar extract
+RUN java -Djarmode=tools -jar chat-persistence-node-*.jar extract --layers --destination extracted
 
 # Stage 2: Secure Runtime Environment
 FROM eclipse-temurin:21-jre-alpine
@@ -19,10 +20,11 @@ WORKDIR /app
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-COPY --from=builder /workspace/chat-persistence-node/target/dependencies/ ./
-COPY --from=builder /workspace/chat-persistence-node/target/spring-boot-loader/ ./
-COPY --from=builder /workspace/chat-persistence-node/target/snapshot-dependencies/ ./
-COPY --from=builder /workspace/chat-persistence-node/target/application/ ./
+# Copy from the new 'extracted' destination directory
+COPY --from=builder /workspace/chat-persistence-node/target/extracted/dependencies/ ./
+COPY --from=builder /workspace/chat-persistence-node/target/extracted/spring-boot-loader/ ./
+COPY --from=builder /workspace/chat-persistence-node/target/extracted/snapshot-dependencies/ ./
+COPY --from=builder /workspace/chat-persistence-node/target/extracted/application/ ./
 
 EXPOSE 8090
 
