@@ -14,6 +14,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      - chat-network
 
   cassandra-node:
     image: cassandra:4.1
@@ -33,7 +35,49 @@ services:
       interval: 15s
       timeout: 10s
       retries: 5
+    networks:
+      - chat-network
+
+  connection-node:
+    build:
+      context: ../
+      dockerfile: chat-connection-node/Dockerfile
+    container_name: chat-connection
+    ports:
+      - "8081:8081"
+    environment:
+      # Override the default Spring profile to bind to the Docker network instead of localhost
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_DATA_REDIS_HOST=redis-node
+    depends_on:
+      redis-node:
+        condition: service_healthy
+    networks:
+      - chat-network
+
+  persistence-node:
+    build:
+      context: ../
+      dockerfile: chat-persistence-node/Dockerfile
+    container_name: chat-persistence
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_DATA_REDIS_HOST=redis-node
+      - SPRING_DATA_CASSANDRA_CONTACT_POINTS=cassandra-node
+    depends_on:
+      redis-node:
+        condition: service_healthy
+      cassandra-node:
+        condition: service_healthy
+    networks:
+      - chat-network
 
 volumes:
   redis_data:
   cassandra_data:
+
+networks:
+  chat-network:
+    driver: bridge
