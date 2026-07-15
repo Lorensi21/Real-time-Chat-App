@@ -6,6 +6,7 @@ WORKDIR /workspace
 COPY pom.xml .
 COPY chat-common ./chat-common
 COPY chat-connection-node ./chat-connection-node
+COPY chat-persistence-node ./chat-persistence-node
 
 # Compile the specific module and its internal dependencies (-am = also make)
 RUN mvn -pl chat-connection-node -am clean package -DskipTests

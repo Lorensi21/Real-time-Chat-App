@@ -5,6 +5,7 @@ WORKDIR /workspace
 COPY pom.xml .
 COPY chat-common ./chat-common
 COPY chat-persistence-node ./chat-persistence-node
+COPY chat-connection-node ./chat-connection-node
 
 RUN mvn -pl chat-persistence-node -am clean package -DskipTests
 
