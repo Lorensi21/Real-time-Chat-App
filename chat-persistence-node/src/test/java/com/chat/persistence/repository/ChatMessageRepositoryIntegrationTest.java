@@ -18,7 +18,8 @@ import java.util.UUID;
 public class ChatMessageRepositoryIntegrationTest {
     @Container
     @ServiceConnection
-    static CassandraContainer<?> cassandra = new CassandraContainer<>("cassandra:4.1");
+    static CassandraContainer<?> cassandra = new CassandraContainer<>("cassandra:4.1")
+            .withInitScript("init.cql");
 
     @Autowired
     private ChatMessageRepository repository;

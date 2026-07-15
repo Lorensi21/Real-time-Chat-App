@@ -1,0 +1,2 @@
+-- Create the test keyspace with a simple replication strategy suitable for local testing
+CREATE KEYSPACE IF NOT EXISTS chat_test_keyspace WITH replication = {'class':'SimpleStrategy', 'replication_factor':1};

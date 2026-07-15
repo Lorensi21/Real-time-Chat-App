@@ -6,10 +6,8 @@ spring:
     name: chat-persistence-node
   profiles:
     active: local
-    spring:
-      data:
-        cassandra:
-          # Instructs Spring Data to automatically execute DDL to create the keyspace and tables
-          schema-action: create-if-not-exists
-          keyspace-name: chat_test_keyspace
-          local-datacenter: datacenter1
+
+  cassandra:
+    schema-action: create-if-not-exists
+    keyspace-name: chat_test_keyspace
+    local-datacenter: datacenter1
