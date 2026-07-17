@@ -18,7 +18,6 @@ import java.util.Date;
 public class AuthController {
 
     private final SecretKey key;
-    // 1 hour = 60 minutes * 60 seconds * 1000 milliseconds
     private static final long ONE_HOUR_IN_MILLIS = 3600000;
 
     public AuthController(@Value("${jwt.secret}") String secret) {

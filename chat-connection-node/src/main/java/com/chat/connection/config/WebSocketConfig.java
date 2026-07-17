@@ -1,11 +1,10 @@
 package com.chat.connection.config;
 
-import com.chat.connection.websocket.ChatWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
 
 import java.util.Map;
@@ -14,13 +13,20 @@ import java.util.Map;
 public class WebSocketConfig {
 
     @Bean
-    public HandlerMapping webSocketMapping(ChatWebSocketHandler webSocketHandler) {
-        Map<String, Object> map = Map.of("/ws/chat", webSocketHandler);
-        return new SimpleUrlHandlerMapping(map, Ordered.HIGHEST_PRECEDENCE);
+    public HandlerMapping webSocketMapping(WebSocketHandler chatWebSocketHandler) {
+        SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+
+        // Bind the /chat endpoint to your custom handler
+        mapping.setUrlMap(Map.of("/chat", chatWebSocketHandler));
+
+        // Critical: order must be -1 so this mapping evaluates before standard REST route handlers
+        mapping.setOrder(-1);
+        return mapping;
     }
 
     @Bean
     public WebSocketHandlerAdapter handlerAdapter() {
+        // Required by WebFlux to execute the WebSocketHandler
         return new WebSocketHandlerAdapter();
     }
 }
