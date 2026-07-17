@@ -11,7 +11,7 @@ RUN mvn -pl chat-persistence-node -am clean package -DskipTests
 
 # Extract the layered components using the modern Spring Boot 3.3+ tools mode
 WORKDIR /workspace/chat-persistence-node/target
-RUN java -Djarmode=tools -jar chat-persistence-node-*.jar extract --layers --destination extracted
+RUN java -Djarmode=layertools -jar chat-connection-node-*.jar extract --destination extracted
 
 # Stage 2: Secure Runtime Environment
 FROM eclipse-temurin:21-jre-alpine
